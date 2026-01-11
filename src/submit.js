@@ -2,6 +2,9 @@
 
 import { useStore } from './store';
 
+// Backend API URL - can be configured via environment variable
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 export const SubmitButton = () => {
     const nodes = useStore(state => state.nodes);
     const edges = useStore(state => state.edges);
@@ -15,7 +18,7 @@ export const SubmitButton = () => {
             };
 
             // Send to backend
-            const response = await fetch('http://localhost:8000/pipelines/parse', {
+            const response = await fetch(`${API_URL}/pipelines/parse`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +45,7 @@ export const SubmitButton = () => {
 
         } catch (error) {
             console.error('Error submitting pipeline:', error);
-            alert(`Error submitting pipeline: ${error.message}\n\nMake sure the backend is running on http://localhost:8000`);
+            alert(`Error submitting pipeline: ${error.message}\n\nMake sure the backend is running on ${API_URL}`);
         }
     };
 

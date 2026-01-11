@@ -13,14 +13,12 @@ export const TextNode = ({ id, data }) => {
   // Extract variables from text (e.g., {{variable}})
   const extractVariables = (text) => {
     const regex = /\{\{(\w+)\}\}/g;
-    const matches = [];
+    const matchesSet = new Set();
     let match;
     while ((match = regex.exec(text)) !== null) {
-      if (!matches.includes(match[1])) {
-        matches.push(match[1]);
-      }
+      matchesSet.add(match[1]);
     }
-    return matches;
+    return Array.from(matchesSet);
   };
 
   useEffect(() => {
