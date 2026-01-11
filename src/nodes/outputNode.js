@@ -1,7 +1,7 @@
 // outputNode.js
 
 import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { BaseNode } from './BaseNode';
 
 export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
@@ -16,32 +16,44 @@ export const OutputNode = ({ id, data }) => {
   };
 
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-value`}
-      />
-      <div>
-        <span>Output</span>
-      </div>
-      <div>
-        <label>
-          Name:
+    <BaseNode
+      id={id}
+      data={data}
+      title="Output"
+      inputs={[{ id: 'value', label: 'Input' }]}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '12px' }}>
+          <span style={{ marginBottom: '4px', color: '#555' }}>Name:</span>
           <input 
             type="text" 
             value={currName} 
-            onChange={handleNameChange} 
+            onChange={handleNameChange}
+            style={{
+              padding: '6px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '12px'
+            }}
           />
         </label>
-        <label>
-          Type:
-          <select value={outputType} onChange={handleTypeChange}>
+        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '12px' }}>
+          <span style={{ marginBottom: '4px', color: '#555' }}>Type:</span>
+          <select 
+            value={outputType} 
+            onChange={handleTypeChange}
+            style={{
+              padding: '6px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '12px'
+            }}
+          >
             <option value="Text">Text</option>
             <option value="File">Image</option>
           </select>
         </label>
       </div>
-    </div>
+    </BaseNode>
   );
 }
