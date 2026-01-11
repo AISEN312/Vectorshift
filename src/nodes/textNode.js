@@ -3,19 +3,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { BaseNode } from './BaseNode';
 
+// Constants for text node sizing
+const MIN_TEXTAREA_WIDTH = 180;
+const MAX_TEXTAREA_WIDTH = 400;
+const MIN_TEXTAREA_HEIGHT = 40;
+const CHAR_WIDTH_MULTIPLIER = 8;
+
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '{{input}}');
   const [textAreaHeight, setTextAreaHeight] = useState('auto');
-  const [textAreaWidth, setTextAreaWidth] = useState(180);
+  const [textAreaWidth, setTextAreaWidth] = useState(MIN_TEXTAREA_WIDTH);
   const [variables, setVariables] = useState([]);
   const textAreaRef = useRef(null);
 
   // Extract variables from text (e.g., {{variable}})
   const extractVariables = (text) => {
-    const regex = /\{\{(\w+)\}\}/g;
     const matchesSet = new Set();
-    let match;
-    while ((match = regex.exec(text)) !== null) {
+    // Create new regex for each call to avoid lastIndex issues
+    const matches = text.matchAll(/\{\{(\w+)\}\}/g);
+    for (const match of matches) {
       matchesSet.add(match[1]);
     }
     return Array.from(matchesSet);
@@ -29,13 +35,16 @@ export const TextNode = ({ id, data }) => {
     // Auto-resize textarea
     if (textAreaRef.current) {
       textAreaRef.current.style.height = 'auto';
-      const newHeight = Math.max(40, textAreaRef.current.scrollHeight);
+      const newHeight = Math.max(MIN_TEXTAREA_HEIGHT, textAreaRef.current.scrollHeight);
       setTextAreaHeight(`${newHeight}px`);
       
       // Adjust width based on content
       const lines = currText.split('\n');
       const maxLineLength = Math.max(...lines.map(line => line.length), 10);
-      const newWidth = Math.min(Math.max(180, maxLineLength * 8), 400);
+      const newWidth = Math.min(
+        Math.max(MIN_TEXTAREA_WIDTH, maxLineLength * CHAR_WIDTH_MULTIPLIER), 
+        MAX_TEXTAREA_WIDTH
+      );
       setTextAreaWidth(newWidth);
     }
   }, [currText]);

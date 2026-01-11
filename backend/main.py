@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
+from collections import deque
 
 app = FastAPI()
 
@@ -25,7 +26,7 @@ def read_root():
 def is_dag(nodes: List[Dict[str, Any]], edges: List[Dict[str, Any]]) -> bool:
     """
     Check if the graph formed by nodes and edges is a Directed Acyclic Graph (DAG).
-    Uses topological sorting approach (Kahn's algorithm).
+    Uses topological sorting approach (Kahn's algorithm) with deque for O(1) operations.
     """
     if not nodes:
         return True
@@ -42,13 +43,13 @@ def is_dag(nodes: List[Dict[str, Any]], edges: List[Dict[str, Any]]) -> bool:
             adjacency[source].append(target)
             in_degree[target] += 1
     
-    # Find all nodes with in-degree 0
-    queue = [node_id for node_id, degree in in_degree.items() if degree == 0]
+    # Find all nodes with in-degree 0 - use deque for O(1) operations
+    queue = deque([node_id for node_id, degree in in_degree.items() if degree == 0])
     visited_count = 0
     
     # Process nodes with in-degree 0
     while queue:
-        node = queue.pop(0)
+        node = queue.popleft()  # O(1) operation with deque
         visited_count += 1
         
         # Reduce in-degree for neighbors

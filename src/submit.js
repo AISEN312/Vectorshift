@@ -1,6 +1,7 @@
 // submit.js
 
 import { useStore } from './store';
+import { useState } from 'react';
 
 // Backend API URL - can be configured via environment variable
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -8,6 +9,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 export const SubmitButton = () => {
     const nodes = useStore(state => state.nodes);
     const edges = useStore(state => state.edges);
+    const [isHovered, setIsHovered] = useState(false);
 
     const handleSubmit = async () => {
         try {
@@ -49,40 +51,37 @@ export const SubmitButton = () => {
         }
     };
 
+    const containerStyle = {
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        padding: '20px',
+        backgroundColor: '#f5f7fa',
+        borderTop: '2px solid #e0e6ed'
+    };
+
+    const buttonStyle = {
+        padding: '12px 32px',
+        fontSize: '16px',
+        fontWeight: '600',
+        color: '#fff',
+        backgroundColor: isHovered ? '#357abd' : '#4a90e2',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        boxShadow: isHovered ? '0 4px 12px rgba(74, 144, 226, 0.4)' : '0 2px 8px rgba(74, 144, 226, 0.3)',
+        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
+        transition: 'all 0.2s ease'
+    };
+
     return (
-        <div style={{
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            padding: '20px',
-            backgroundColor: '#f5f7fa',
-            borderTop: '2px solid #e0e6ed'
-        }}>
+        <div style={containerStyle}>
             <button 
                 type="submit" 
                 onClick={handleSubmit}
-                style={{
-                    padding: '12px 32px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#fff',
-                    backgroundColor: '#4a90e2',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(74, 144, 226, 0.3)',
-                    transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#357abd';
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 4px 12px rgba(74, 144, 226, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#4a90e2';
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 2px 8px rgba(74, 144, 226, 0.3)';
-                }}
+                style={buttonStyle}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 Submit Pipeline
             </button>
